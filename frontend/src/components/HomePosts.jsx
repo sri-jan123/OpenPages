@@ -1,5 +1,6 @@
 import React from "react";
-import { URL } from "../url";
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 function HomePosts({ post }) {
   return (
@@ -10,7 +11,7 @@ function HomePosts({ post }) {
 
         {post.photo && (
           <img
-            src={`${URL}/uploads/${post.photo}`}
+            src={`${API_URL}/uploads/${post.photo}`}
             alt="post"
             className="h-full w-full object-cover rounded"
           />

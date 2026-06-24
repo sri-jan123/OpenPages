@@ -1,8 +1,9 @@
 import React, { useState, useContext, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { URL } from "../url";
 import { UserContext } from "../context/UserContext";
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -24,7 +25,7 @@ function Login() {
       setError(false);
 
       const res = await axios.post(
-        `${URL}/api/auth/login`,
+        `${API_URL}/api/auth/login`,
         { email, password },
         { withCredentials: true }
       );

@@ -1,7 +1,8 @@
 import React, { useContext } from "react";
 import axios from "axios";
-import { URL } from "../url";
 import { UserContext } from "../context/UserContext";
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 function Comment({ comment, refreshComments }) {
   const { user } = useContext(UserContext);
@@ -9,7 +10,7 @@ function Comment({ comment, refreshComments }) {
   const handleDelete = async () => {
     try {
       await axios.delete(
-        `${URL}/api/comments/${comment._id}`,
+        `${API_URL}/api/comments/${comment._id}`,
         {
           withCredentials: true,
         }

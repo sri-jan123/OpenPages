@@ -4,8 +4,8 @@ import axios from 'axios';
 
 import HomePosts from '../components/HomePosts';
 import Loader from '../components/Loader';
-import { URL } from '../url';
 import { UserContext } from '../context/UserContext';
+const API_URL = import.meta.env.VITE_API_URL;
 
 function Home() {
   const { search } = useLocation();
@@ -20,7 +20,7 @@ function Home() {
     setLoader(true);
 
     try {
-      const res = await axios.get(`${URL}/api/posts${search}`);
+      const res = await axios.get(`${API_URL}/api/posts${search}`);
 
       setPosts(res.data);
       setNoResults(res.data.length === 0);

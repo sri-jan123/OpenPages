@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { URL } from "../url";
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 function ProfilePosts({ post }) {
   return (
@@ -13,7 +14,7 @@ function ProfilePosts({ post }) {
 
           {post.photo && (
             <img
-              src={`${URL}/uploads/${post.photo}`}
+              src={`${API_URL}/uploads/${post.photo}`}
               alt="post"
               className="h-full w-full object-cover rounded"
             />

@@ -2,8 +2,9 @@ import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import ProfilePosts from "../components/ProfilePosts";
 import { UserContext } from "../context/UserContext";
-import { URL } from "../url";
 import { useNavigate } from "react-router-dom";
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 function Profile() {
   const { user, setUser } = useContext(UserContext);
@@ -25,7 +26,7 @@ function Profile() {
   const fetchPosts = async () => {
     try {
       const res = await axios.get(
-        `${URL}/api/posts/user/${user._id}`
+        `${API_URL}/api/posts/user/${user._id}`
       );
 
       setPosts(res.data);
@@ -46,7 +47,7 @@ function Profile() {
       }
 
       const res = await axios.put(
-        `${URL}/api/users/${user._id}`,
+        `${API_URL}/api/users/${user._id}`,
         body,
         {
           withCredentials: true,
@@ -74,7 +75,7 @@ function Profile() {
 
     try {
       await axios.delete(
-        `${URL}/api/users/${user._id}`,
+        `${API_URL}/api/users/${user._id}`,
         {
           withCredentials: true,
         }

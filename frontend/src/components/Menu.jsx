@@ -1,8 +1,9 @@
 import React, { useContext } from "react";
 import { UserContext } from "../context/UserContext";
-import { URL } from "../url";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 function Menu() {
   const { user, setUser } = useContext(UserContext);
@@ -11,7 +12,7 @@ function Menu() {
 const handleLogout = async () => {
   try {
     await axios.get(
-      `${URL}/api/auth/logout`,
+      `${API_URL}/api/auth/logout`,
       { withCredentials: true }
     );
 

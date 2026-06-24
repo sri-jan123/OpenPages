@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import { URL } from "../url";
 import Comment from "../components/Comment";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 function PostDetails() {
   const { id } = useParams();
@@ -29,7 +30,7 @@ function PostDetails() {
   const fetchComments = async () => {
     try {
       const res = await axios.get(
-        `${URL}/api/comments/post/${id}`
+        `${API_URL}/api/comments/post/${id}`
       );
 
       setComments(res.data);
@@ -42,7 +43,7 @@ function PostDetails() {
   const fetchLikes = async () => {
     try {
       const res = await axios.get(
-        `${URL}/api/likes/${id}`
+        `${API_URL}/api/likes/${id}`
       );
 
       setLikeCount(res.data.count);
@@ -55,7 +56,7 @@ function PostDetails() {
   const fetchLikeStatus = async () => {
     try {
       const res = await axios.get(
-        `${URL}/api/likes/status/${id}`,
+        `${API_URL}/api/likes/status/${id}`,
         {
           withCredentials: true
         }
@@ -71,7 +72,7 @@ function PostDetails() {
   const handleLike = async () => {
     try {
       const res = await axios.post(
-        `${URL}/api/likes/toggle/${id}`,
+        `${API_URL}/api/likes/toggle/${id}`,
         {},
         {
           withCredentials: true
@@ -96,7 +97,7 @@ function PostDetails() {
 
     try {
       await axios.post(
-        `${URL}/api/comments/create`,
+        `${API_URL}/api/comments/create`,
         {
           comment: newComment,
           postId: id
