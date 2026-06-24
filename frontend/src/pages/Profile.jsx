@@ -1,43 +1,107 @@
-import React, { useContext, useEffect, useState } from 'react'
-import ProfilePosts from '../components/ProfilePosts'
-import { UserContext } from '../context/UserContext'
-import axios from 'axios'
-import { URL } from '../url'
+import React, { useContext, useEffect, useState } from "react";
+import axios from "axios";
+import ProfilePosts from "../components/ProfilePosts";
+import { UserContext } from "../context/UserContext";
+import { URL } from "../url";
+import { useNavigate } from "react-router-dom";
 
 function Profile() {
+  const { user, setUser } = useContext(UserContext);
+  const navigate = useNavigate();
 
-  const { user } = useContext(UserContext)
+  const [posts, setPosts] = useState([]);
 
-  const [posts, setPosts] = useState([])
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
   useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const res = await axios.get(
-          URL + "/api/posts/user/" + user.id
-        )
-
-        setPosts(res.data)
-      }
-      catch (err) {
-        console.log(err)
-      }
-    }
-
     if (user) {
-      fetchPosts()
-    }
+      setUsername(user.username);
 
-  }, [user])
+      fetchPosts();
+    }
+  }, [user]);
+
+  const fetchPosts = async () => {
+    try {
+      const res = await axios.get(
+        `${URL}/api/posts/user/${user._id}`
+      );
+
+      setPosts(res.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  // UPDATE USER
+  const handleUpdate = async () => {
+    try {
+      const body = {
+        username
+      };
+
+      if (password.trim()) {
+        body.password = password;
+      }
+
+      const res = await axios.put(
+        `${URL}/api/users/${user._id}`,
+        body,
+        {
+          withCredentials: true,
+        }
+      );
+
+      setUser(res.data);
+      localStorage.setItem("user", JSON.stringify(res.data));
+
+      setPassword("");
+
+      alert("Profile updated successfully");
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  // DELETE ACCOUNT
+  const handleDelete = async () => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete your account?"
+    );
+
+    if (!confirmDelete) return;
+
+    try {
+      await axios.delete(
+        `${URL}/api/users/${user._id}`,
+        {
+          withCredentials: true,
+        }
+      );
+
+      localStorage.removeItem("user");
+      setUser(null);
+
+      navigate("/");
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
-    <div>
-      <div className='px-8 md:px-[200px] mt-8 flex md:flex-row flex-col-reverse md:items-start'>
+  <div className="px-8 md:px-[200px] mt-20">
 
-        {/* User Posts */}
-        <div className='flex flex-col md:w-[70%] w-full'>
-          <h1 className='text-xl font-bold mb-4'>Your Posts</h1>
+    <div className="grid md:grid-cols-[2fr_1fr] gap-10">
 
+      {/* LEFT SIDE */}
+      <div>
+
+        <h1 className="text-2xl font-bold mb-6">
+          Your Posts
+        </h1>
+
+        <div className="flex flex-col">
           {posts.length > 0 ? (
             posts.map((post) => (
               <ProfilePosts
@@ -50,48 +114,60 @@ function Profile() {
           )}
         </div>
 
-        {/* Profile Section */}
-        <div className='flex justify-start md:justify-end md:sticky md:top-16 items-start md:w-[30%] md:items-end w-full'>
+      </div>
 
-          <div className='flex flex-col space-y-4'>
-            <h1 className='text-xl font-bold mb-4'>Profile</h1>
+      {/* RIGHT SIDE */}
+      <div>
 
-            <input
-              className='outline-none px-4 py-2 text-gray-500 border'
-              value={user?.username || ""}
-              readOnly
-              type='text'
-            />
+        <div className="border p-6 rounded-lg shadow-lg flex flex-col gap-4 sticky top-24">
 
-            <input
-              className='outline-none px-4 py-2 text-gray-500 border'
-              value={user?.email || ""}
-              readOnly
-              type='email'
-            />
+          <h1 className="text-2xl font-bold">
+            Profile
+          </h1>
 
-            <input
-              className='outline-none px-4 py-2 text-gray-500 border'
-              placeholder='new password'
-              type='password'
-            />
+          <input
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            className="border px-4 py-2 outline-none"
+          />
 
-            <div className='flex items-center space-x-4 mt-8'>
-              <button className='text-white font-semibold bg-black px-4 py-2 hover:text-black hover:bg-gray-400'>
-                Update
-              </button>
+          <input
+            type="email"
+            value={user?.email}
+            readOnly
+            className="border px-4 py-2 bg-gray-100"
+          />
 
-              <button className='text-white font-semibold bg-black px-4 py-2 hover:text-black hover:bg-gray-400'>
-                Delete
-              </button>
-            </div>
-          </div>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="New Password"
+            className="border px-4 py-2 outline-none"
+          />
+
+          <button
+            onClick={handleUpdate}
+            className="bg-black text-white py-2 rounded"
+          >
+            Update Profile
+          </button>
+
+          <button
+            onClick={handleDelete}
+            className="bg-red-600 text-white py-2 rounded"
+          >
+            Delete Account
+          </button>
 
         </div>
 
       </div>
+
     </div>
-  )
+  </div>
+);
 }
 
-export default Profile
+export default Profile;

@@ -17,14 +17,17 @@ function Menu() {
     }
   return (
     
-    <div className='bg-black w-[200px] flex flex-col items-start absolute top-12 rounded-md  md:right-32 p-4 right-6 space-y-4'>
-      { !user && <h3 className='text-white text-sm hover:text-gray-500 cursor-pointer'>Login</h3>}
+<div className='bg-black w-[200px] flex flex-col absolute top-12 right-6 md:right-32 p-4 rounded-md space-y-4 z-50'>      { !user && <h3 className='text-white text-sm hover:text-gray-500 cursor-pointer'>Login</h3>}
       { !user && <h3 className='text-white text-sm hover:text-gray-500 cursor-pointer'>Register</h3>}
       {user && (
   <Link to={`/profile/${user.id}`}>
-    <h3 className='text-white text-sm hover:text-gray-500 cursor-pointer'>
+    {user && (
+  <Link to="/profile">
+    <h3 className="text-white text-sm hover:text-gray-500 cursor-pointer">
       Profile
     </h3>
+  </Link>
+)}
   </Link>
 )}
       { user && <h3 className='text-white text-sm hover:text-gray-500 cursor-pointer'>Write</h3>}

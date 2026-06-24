@@ -8,6 +8,7 @@ const authRoute=require('./Routes/auth')
 const userRoute=require('./Routes/users')
 const postRoute=require('./Routes/posts')
 const commentRoute=require('./Routes/comments');
+const likeRoute = require("./Routes/likes");
 
 const app = express();
 
@@ -42,7 +43,8 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")))
 app.use("/api/auth",authRoute)
 app.use("/api/users",userRoute)
 app.use("/api/posts",postRoute)
-app.use("/api/comment",commentRoute);
+app.use("/api/comments",commentRoute);
+app.use("/api/likes", likeRoute);
 
 // Start the server
 
