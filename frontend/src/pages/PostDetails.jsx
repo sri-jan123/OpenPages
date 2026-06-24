@@ -162,6 +162,7 @@ function PostDetails() {
       <p className="mt-8 whitespace-pre-wrap">
         {post.desc}
       </p>
+      {/* <div dangerouslySetInnerHTML={{ __html: post.desc }} /> */}
 
       {/* Like Section */}
       <div className="flex items-center gap-3 mt-8">

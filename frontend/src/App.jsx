@@ -8,6 +8,7 @@ import PostDetails from "./pages/PostDetails";
 import CreatePost from "./pages/CreatePost";
 import EditPost from "./pages/EditPost";
 import Profile from "./pages/Profile";
+import "react-quill/dist/quill.snow.css";
 import { UserContextProvider } from "./context/UserContext";
 
 function App() {

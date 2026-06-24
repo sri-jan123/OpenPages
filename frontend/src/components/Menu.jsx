@@ -1,39 +1,77 @@
-import React, { useContext } from 'react'
-import { UserContext } from '../context/UserContext';
-import {URL} from '../url';
-import axios from 'axios';
-import { Link } from 'react-router-dom';
+import React, { useContext } from "react";
+import { UserContext } from "../context/UserContext";
+import { URL } from "../url";
+import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
 
 function Menu() {
+  const { user, setUser } = useContext(UserContext);
+  const navigate = useNavigate();
 
-    const {user}=useContext(UserContext);
-    console.log("User data:", user);
-    const{setUser}=useContext(UserContext);
+const handleLogout = async () => {
+  try {
+    await axios.get(
+      `${URL}/api/auth/logout`,
+      { withCredentials: true }
+    );
 
-    const handleLogout=async()=>{
-        const res= await axios.get(URL+"/api/auth/logout",{withCredentials:true})
-        console.log(res.data)
-        setUser(null)
-    }
+    localStorage.removeItem("user");
+
+    setUser(null);
+
+    navigate("/login");
+
+  } catch (err) {
+    console.log(err);
+  }
+};
+
   return (
-    
-<div className='bg-black w-[200px] flex flex-col absolute top-12 right-6 md:right-32 p-4 rounded-md space-y-4 z-50'>      { !user && <h3 className='text-white text-sm hover:text-gray-500 cursor-pointer'>Login</h3>}
-      { !user && <h3 className='text-white text-sm hover:text-gray-500 cursor-pointer'>Register</h3>}
+    <div className="bg-black w-[200px] flex flex-col absolute top-12 right-6 md:right-32 p-4 rounded-md space-y-4 z-50">
+
+      {!user && (
+        <Link to="/login">
+          <h3 className="text-white text-sm hover:text-gray-500 cursor-pointer">
+            Login
+          </h3>
+        </Link>
+      )}
+
+      {!user && (
+        <Link to="/register">
+          <h3 className="text-white text-sm hover:text-gray-500 cursor-pointer">
+            Register
+          </h3>
+        </Link>
+      )}
+
       {user && (
-  <Link to={`/profile/${user.id}`}>
-    {user && (
-  <Link to="/profile">
-    <h3 className="text-white text-sm hover:text-gray-500 cursor-pointer">
-      Profile
-    </h3>
-  </Link>
-)}
-  </Link>
-)}
-      { user && <h3 className='text-white text-sm hover:text-gray-500 cursor-pointer'>Write</h3>}
-      { user && <h3 className='text-white text-sm hover:text-gray-500 cursor-pointer'>MyBlogs</h3>}
-      { user && <h3 className='text-white text-sm hover:text-gray-500 cursor-pointer' onClick={handleLogout}>Logout</h3>}
+        <Link to="/profile">
+          <h3 className="text-white text-sm hover:text-gray-500 cursor-pointer">
+            Profile
+          </h3>
+        </Link>
+      )}
+
+      {user && (
+        <Link to="/write">
+          <h3 className="text-white text-sm hover:text-gray-500 cursor-pointer">
+            Write
+          </h3>
+        </Link>
+      )}
+
+      {user && (
+        <h3
+          onClick={handleLogout}
+          className="text-white text-sm hover:text-gray-500 cursor-pointer"
+        >
+          Logout
+        </h3>
+      )}
+
     </div>
-  )
+  );
 }
+
 export default Menu;
