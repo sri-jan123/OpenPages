@@ -11,7 +11,7 @@ function HomePosts({ post }) {
 
         {post.photo && (
           <img
-            src={`${API_URL}/uploads/${post.photo}`}
+            src={post.photo}
             alt="post"
             className="h-full w-full object-cover rounded"
           />

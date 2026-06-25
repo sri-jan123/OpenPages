@@ -4,6 +4,8 @@ const cookieParser=require('cookie-parser')
 const cors=require('cors');
 const dotenv = require('dotenv');
 
+dotenv.config();
+
 const authRoute=require('./Routes/auth')
 const userRoute=require('./Routes/users')
 const postRoute=require('./Routes/posts')
@@ -12,7 +14,7 @@ const likeRoute = require("./Routes/likes");
 
 const app = express();
 
-dotenv.config();
+
 
 // Database connection
 const connectDB = async () => {

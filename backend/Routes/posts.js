@@ -6,26 +6,33 @@ const multer = require("multer");
 const Post = require("../Models/Post");
 const User = require("../Models/User");
 const verifyToken = require("../verifyToken");
+const { BlobServiceClient } = require("@azure/storage-blob");
 
 
 // =======================
 // Multer Configuration
 // =======================
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "uploads");
-  },
+// console.log(
+//   "Connection String:",
+//   process.env.AZURE_STORAGE_CONNECTION_STRING
+// );
 
-  filename: function (req, file, cb) {
-    const uniqueName = Date.now() + "-" + file.originalname;
-    cb(null, uniqueName);
-  }
-});
 
 const upload = multer({
-  storage: storage
+  storage: multer.memoryStorage()
 });
+
+
+const blobServiceClient =
+  BlobServiceClient.fromConnectionString(
+    process.env.AZURE_STORAGE_CONNECTION_STRING
+  );
+
+const containerClient =
+  blobServiceClient.getContainerClient(
+    process.env.AZURE_CONTAINER_NAME
+  );
 
 
 // =======================
@@ -38,9 +45,7 @@ router.post(
   upload.single("image"),
   async (req, res) => {
     try {
-
       let parsedCategories = [];
-
       try {
         parsedCategories = req.body.categories
           ? JSON.parse(req.body.categories)
@@ -48,6 +53,24 @@ router.post(
       } catch {
         parsedCategories = [];
       }
+
+      let imageUrl = "";
+
+         if (req.file) {
+
+           const blobName =
+               Date.now() + "-" + req.file.originalname;
+
+           const blockBlobClient =
+               containerClient.getBlockBlobClient(blobName);
+
+           await blockBlobClient.uploadData(
+              req.file.buffer
+                );
+
+            imageUrl = blockBlobClient.url;
+          }
+
 
       const user = await User.findById(req.user.id);
 
@@ -63,7 +86,7 @@ router.post(
         username: user.username,
         userId: user._id,
         categories: parsedCategories,
-        photo: req.file ? req.file.filename : ""
+        photo: imageUrl
       });
 
       const savedPost = await newPost.save();
@@ -81,6 +104,25 @@ router.post(
   }
 );
 
+
+
+// =======================
+// GET POSTS OF A USER
+// =======================
+
+router.get("/user/:userId", async (req, res) => {
+  try {
+
+    const posts = await Post.find({
+      userId: req.params.userId
+    });
+
+    res.status(200).json(posts);
+
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
 
 // =======================
 // GET ALL POSTS
@@ -101,25 +143,6 @@ router.get("/", async (req, res) => {
     const posts = await Post.find(
       query.search ? searchFilter : {}
     );
-
-    res.status(200).json(posts);
-
-  } catch (err) {
-    res.status(500).json(err);
-  }
-});
-
-
-// =======================
-// GET POSTS OF A USER
-// =======================
-
-router.get("/user/:userId", async (req, res) => {
-  try {
-
-    const posts = await Post.find({
-      userId: req.params.userId
-    });
 
     res.status(200).json(posts);
 

@@ -19,7 +19,7 @@ function PostDetails() {
   // ---------------- Fetch Post ----------------
   const fetchPost = async () => {
     try {
-      const res = await axios.get(`${URL}/api/posts/${id}`);
+      const res = await axios.get(`${API_URL}/api/posts/${id}`);
       setPost(res.data);
     } catch (err) {
       console.log(err);
@@ -153,7 +153,7 @@ function PostDetails() {
       {/* Image */}
       {post.photo && (
         <img
-          src={`${URL}/uploads/${post.photo}`}
+          src={post.photo}
           alt="post"
           className="w-2/4 max-w-3xl h-auto rounded-lg object-cover mx-auto mt-6"
         />
