@@ -1,3 +1,5 @@
+require("./monitor");
+
 const express=require('express')
 const { default: mongoose } = require('mongoose');
 const cookieParser=require('cookie-parser')
@@ -28,12 +30,30 @@ const connectDB = async () => {
 
 // Middlewares
 
-app.use(express.json());
+
 app.use(cookieParser())
 
+const allowedOrigins = [
+  "http://localhost:5173",                           // Local development
+  "https://zealous-cliff-064ea4300.7.azurestaticapps.net", // Azure Static Web App
+  "https://notesonline.dev",                         // Your custom frontend domain
+  "https://www.notesonline.dev"                      // Optional
+];
+
+app.use(express.json());
+
 app.use(cors({
-    origin:"http://localhost:5173",
-    credentials:true
+  origin: function (origin, callback) {
+    // Allow requests with no origin (Postman, curl, mobile apps)
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true
 }));
 
 // Serve uploaded images
